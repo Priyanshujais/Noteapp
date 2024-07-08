@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../Widgets/ui.helper.dart';
+import 'AddNotes/addnotescreen.dart';
+import 'FetchNotes/Cubits/fetchnotescubit.dart';
+import 'FetchNotes/Cubits/fetchnotesstates.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -25,12 +30,12 @@ class _MyHomePageState extends State<MyHomePage> {
           elevation: 0,
           title: Row(
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 25,
                 backgroundImage: AssetImage('assets/images/img.png'),
               ),
-              SizedBox(width: 10),
-              Center(
+              const SizedBox(width: 10),
+              const Center(
                 child: Text(
                   'Hi, Priyanshu',
                   style: TextStyle(
@@ -41,9 +46,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               IconButton(
-                icon: Icon(Icons.menu, size: 25, color: Colors.black),
+                icon: const Icon(Icons.menu, size: 25, color: Colors.black),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
@@ -59,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                 ),
-                child: Text(
+                child: const Text(
                   'Drawer Header',
                   style: TextStyle(
                     fontSize: 24,
@@ -68,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               ListTile(
-                title: Text('Logout'),
+                title: const Text('Logout'),
                 onTap: () {
                   // Handle logout action here
                   Navigator.pop(context); // Close the drawer
@@ -78,105 +83,45 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
-        body: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20),
-                Text(
-                  'My Notes',
-                  style: TextStyle(
-                    fontSize: 60,
-                    color: Colors.black,
-                    fontFamily: "mukta",
-                    fontWeight: FontWeight.bold,
+        body: BlocBuilder<FetchNotesCubit,FetchNotesStates>(builder: (context,state){
+          if(state is FetchNotesLoadingStates){
+            return Center(child: CircularProgressIndicator(),);
+          }
+          else if(state is FetchNotesLoadedStates){
+            return ListView.builder(itemBuilder: (context,index){
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.blue.shade100
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(state.getNotesModel.data![index].note.toString()),
+                        Text(state.getNotesModel.data![index].created.toString()),
+
+                      ],),
                   ),
                 ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    uihelper.CustomContainer(
-                      height: 50,
-                      width: 120,
-                      text: "All",
-                      color: Colors.redAccent,
-                      textColor: Colors.white,
-                    ),
-                    uihelper.CustomContainer(
-                      height: 50,
-                      width: 120,
-                      text: "Important",
-                      color: Colors.orangeAccent,
-                      textColor: Colors.white,
-                    ),
-                    uihelper.CustomContainer(
-                      height: 50,
-                      width: 120,
-                      text: "Bookmarked",
-                      color: Colors.yellowAccent,
-                      textColor: Colors.white,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    uihelper.CustomBigContainer(
-                      height: 300,
-                      width: screenWidth / 2.2,
-                      color: Colors.greenAccent,
-                      shadowColor: Colors.green,
-                    ),
-                    SizedBox(width: 10),
-                    uihelper.CustomBigContainer(
-                      height: 300,
-                      width: screenWidth / 2.2,
-                      color: Colors.blueAccent,
-                      shadowColor: Colors.blue,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Center(
-                  child: uihelper.CustomBigContainer(
-                    height: 200,
-                    width: screenWidth / 1.1,
-                    color: Colors.redAccent,
-                    shadowColor: Colors.red,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Center(
-                  child: uihelper.CustomBigContainer(
-                    height: 200,
-                    width: screenWidth / 1.1,
-                    color: Colors.redAccent,
-                    shadowColor: Colors.red,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Center(
-                  child: uihelper.CustomBigContainer(
-                    height: 200,
-                    width: screenWidth / 1.1,
-                    color: Colors.redAccent,
-                    shadowColor: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+              );
+            },itemCount: state.getNotesModel.data!.length,);
+          }
+          else if(state is FetchNotesErrorStates){
+            return Uihelper.CustomSnackbar(state.error.toString(), context);
+          }
+          return Center(child: Text("No Data Found!!"),);
+        }),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // Handle add note
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNoteScreen()));
           },
-          child: Icon(Icons.add),
-          shape: CircleBorder(),
+          child: const Icon(Icons.add),
+          shape: const CircleBorder(),
           backgroundColor: Colors.white,
         ),
       ),

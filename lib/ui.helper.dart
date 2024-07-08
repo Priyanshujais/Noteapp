@@ -1,37 +1,37 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 class uihelper {
   static CustomContainer(double height, double width, String text) {
     return Container(
       height: height,
       width: width,
       decoration: BoxDecoration(
-        color: Colors.transparent.withOpacity(0.2),
+          color: Colors.transparent.withOpacity(0.2),
 
-        borderRadius: BorderRadius.all(Radius.circular(32),
+          borderRadius: const BorderRadius.all(Radius.circular(32),
 
-      ),
-      border: Border.all(color: Colors.white,width: 1)),
+          ),
+          border: Border.all(color: Colors.white,width: 1)),
 
 
       child: Center(child: Text(text)),
     );
   }
-   static CustomBigContainer(double height, double width,  Color color){
+  static CustomBigContainer(double height, double width,  Color color){
     return Container(
       height: height,
       width: width,
-        decoration: BoxDecoration(
+      decoration: BoxDecoration(
         color:color,
 
-     borderRadius: BorderRadius.all(Radius.circular(32),
+        borderRadius: const BorderRadius.all(Radius.circular(32),
 
-     ),
         ),
+      ),
     );
-   }
+  }
 }
+
 
 
 
